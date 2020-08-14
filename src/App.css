@@ -1,9 +1,16 @@
 .App {
   text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-layout {
+  min-height: 100vh;
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 60px;
+  width: 60px;
   pointer-events: none;
 }
 
@@ -11,6 +18,10 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.App-body {
+  padding: 16px;
 }
 
 .App-header {
