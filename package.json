@@ -11,12 +11,20 @@
     "@types/node": "^12.12.54",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
+    "@types/react-relay": "^7.0.11",
     "@types/relay-runtime": "^10.0.3",
     "antd": "^4.5.4",
+    "babel-plugin-macros": "^2.8.0",
+    "babel-plugin-relay": "^10.0.1",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "graphql": "^15.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-relay": "^10.0.1",
     "react-scripts": "3.4.3",
+    "relay-compiler": "^10.0.1",
+    "relay-compiler-language-typescript": "^13.0.1",
+    "relay-hooks": "^3.6.0",
     "typescript": "^3.7.5"
   },
   "scripts": {
@@ -24,7 +32,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "relay": "relay-compiler --language typescript --extensions ts tsx"
+    "relay": "relay-compiler --src ./src --schema src/data/schema.graphql --language typescript --artifactDirectory src/__generated__"
   },
   "eslintConfig": {
     "extends": "react-app"

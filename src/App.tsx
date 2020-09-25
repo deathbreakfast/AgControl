@@ -6,8 +6,11 @@ import {
   DatabaseOutlined
 } from "@ant-design/icons";
 import AppLayout from "./components/Layout";
+import EntitiesPage from "./EntitiesPage";
 import HomePage from "./HomePage";
 import React, { useState } from "react";
+import { RelayEnvironmentProvider } from "relay-hooks";
+import Environment from "./relay/environment";
 
 function App() {
   const [selectedPage, onPageChange] = useState("HOME");
@@ -24,11 +27,14 @@ function App() {
   let content = null;
   if (selectedPage === "HOME") {
     content = <HomePage />;
+  } else if (selectedPage === "ENTITIES") {
+    content = <EntitiesPage />;
   } else {
     content = <div />;
   }
 
   return (
+    <RelayEnvironmentProvider environment={Environment}>
     <div className="App">
       <AppLayout
         content={content}
@@ -36,6 +42,7 @@ function App() {
         onMenuSelect={onMenuSelect}
       />
     </div>
+  </RelayEnvironmentProvider>
   );
 }
 
