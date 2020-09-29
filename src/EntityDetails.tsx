@@ -1,7 +1,8 @@
 import { EntityDetails_entity$key } from "./__generated__/EntityDetails_entity.graphql";
+import { EntityDetailsMutation } from "./__generated__/EntityDetailsMutation.graphql";
 
 import { Button, Card, Checkbox, Divider, Input, Space, Select, Typography } from 'antd';
-import { useFragment } from "relay-hooks";
+import { useFragment, useMutation } from "relay-hooks";
 import graphql from "babel-plugin-relay/macro";
 import React, { useState } from "react";
 import TitledField from "./components/TitledField";
@@ -22,6 +23,17 @@ const fragment = graphql`
     ...EntityDetailsFamily_entity }
 `;
 
+const mutation = graphql`
+  mutation EntityDetailsMutation($input: EditEntityInput!) {
+    editEntity(input: $input) {
+      entity {
+        ...EntitiesList_entities
+        ...EntityDetails_entity
+      }
+    }
+  }
+`;
+
 function EntityDetails(props: Props) {
   const {entity} = props;
   const entityFragment = useFragment<EntityDetails_entity$key>(
@@ -31,13 +43,22 @@ function EntityDetails(props: Props) {
 
   const rightStyle = {height: '80vh', width: 500};
   const rowStyle = {width: 450};
-
-  const [name, onNameChange] = useState<string | null>(null);
+  const [prevID, onPrevIDChange] = useState<string | null>(null);
+    const [name, onNameChange] = useState<string | null>(null);
   const [
     entityType, 
     onEntityTypeChange,
   ] = useState<string | null>(null);
   const [showOnDashboard, onShowOnDashboardChange] = useState<boolean | null>(null);
+
+  if (entityFragment?.id !== prevID) {
+    onNameChange(null);
+    onEntityTypeChange(null);
+    onShowOnDashboardChange(null);
+    onPrevIDChange(entityFragment?.id);
+  }
+
+  const [commit, isMutating] = useMutation(mutation);
 
   if (entityFragment == null) {
     return (
@@ -49,8 +70,7 @@ function EntityDetails(props: Props) {
 
   const nameHasUnsavedChanges = name != null 
     && name.trim() !== "" 
-    && name !== entityFragment.name;
-  const typeHasUnsavedChanges = entityType != null
+    && name !== entityFragment.name; const typeHasUnsavedChanges = entityType != null
     && entityType !== entityFragment.type;
   const showOnDashboardHasUnsavedChanges = showOnDashboard != null
     && showOnDashboard !== entityFragment.showOnDashboard;
@@ -73,6 +93,22 @@ function EntityDetails(props: Props) {
       <Select.Option value="UNKNOWN">Unknown</Select.Option>
     </Select>
   );
+
+  const onSave = () => {
+    commit({
+      variables: {input: {
+        id: entityFragment.id,
+        name,
+        entityType,
+        showOnDashboard,
+      }},
+      onCompleted: () => {
+        onNameChange(null);
+        onEntityTypeChange(null);
+        onShowOnDashboardChange(null);
+      },
+    });
+  };
 
   return (
     <Card 
@@ -121,7 +157,8 @@ function EntityDetails(props: Props) {
         <EntityDetailsFamily entity={entityFragment} />
       </Space>
       <Button 
-        disabled={!hasUnsavedChanges} 
+        disabled={!hasUnsavedChanges || isMutating.loading} 
+        onClick={onSave}
         type="primary">
         Save
       </Button> 
