@@ -9,23 +9,106 @@ type CreateEntity {
 }
 
 input CreateEntityInput {
+  entityType: String
+  name: String
+  parentId: String
+  showOnDashboard: Boolean
+}
+
+type EditEntity {
+  entity: Entity
+  ok: Boolean
+}
+
+input EditEntityInput {
+  id: String!
+  entityType: String
+  name: String
+  parentId: String
+  showOnDashboard: Boolean
+}
+
+type EditSprinkler {
+  sprinkler: Sprinkler
+  ok: Boolean
+}
+
+input EditSprinklerInput {
+  id: String!
   serial: String
+  ipAddress: String
 }
 
 type Entity implements Node {
   id: ID!
-  serial: String
+  type: EntityType
+  name: String
+  showOnDashboard: Boolean
+  parentId: Int
+  children(before: String, after: String, first: Int, last: Int): EntityConnection
+  sprinkler(before: String, after: String, first: Int, last: Int): SprinklerConnection
+  parent: Entity
+}
+
+type EntityConnection {
+  pageInfo: PageInfo!
+  edges: [EntityEdge]!
+}
+
+type EntityEdge {
+  node: Entity
+  cursor: String!
+}
+
+enum EntityType {
+  SPRINKLER
+  UNKNOWN
+  ZONE
 }
 
 type Mutation {
   createEntity(input: CreateEntityInput!): CreateEntity
+  editEntity(input: EditEntityInput!): EditEntity
+  editSprinkler(input: EditSprinklerInput!): EditSprinkler
 }
 
 interface Node {
   id: ID!
 }
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 type Query {
   node(id: ID!): Node
   allEntities: [Entity]
+}
+
+type Sprinkler implements Node {
+  id: ID!
+  entityId: Int
+  status: SprinklerStatus
+  serial: String
+  ipAddress: String
+  entity: Entity
+}
+
+type SprinklerConnection {
+  pageInfo: PageInfo!
+  edges: [SprinklerEdge]!
+}
+
+type SprinklerEdge {
+  node: Sprinkler
+  cursor: String!
+}
+
+enum SprinklerStatus {
+  INACTIVE
+  RUNNING
+  OFF
 }

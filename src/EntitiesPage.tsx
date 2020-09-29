@@ -6,6 +6,7 @@ import {
 
 import { Card, Space, Spin } from "antd";
 import EntitiesList from "./EntitiesList";
+import EntityDetails from "./EntityDetails";
 import { useQuery } from "relay-hooks";
 import graphql from "babel-plugin-relay/macro";
 import React, { Suspense, useState } from "react";
@@ -14,6 +15,7 @@ const query = graphql`
   query EntitiesPageQuery {
     allEntities {
       ...EntitiesList_entities
+      ...EntityDetails_entity
       id
     }
   }
@@ -24,7 +26,7 @@ function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
 }
 
 function EntiesPage() {
-  const [selectedEntity, onEntityChange] = useState<string | null>(null);
+  const [selectedEntityID, onEntityChange] = useState<string | null>(null);
 
   const { props, error } = useQuery<EntitiesPageQuery>(query);
 
@@ -40,18 +42,19 @@ function EntiesPage() {
   if (allEntities == null || allEntities === undefined) {
     return <div />;
   }
+  const selectedEntity = allEntities.filter(entity => 
+    entity?.id === selectedEntityID,
+  )[0];
   return (
     <Suspense fallback={<Spin tip="Loading..." />}>
       <Space className="App-body" direction="vertical">
         <Space direction="horizontal">
-          <Card title="Entities" style={{ width: 350 }}>
             <EntitiesList
               entities={allEntities.filter(notEmpty)}
               onSelect={onEntityChange}
-              selectedEntity={selectedEntity}
+              selectedEntityID={selectedEntityID}
             />
-          </Card>
-          <Card title={selectedEntity}>Selected Entity Data</Card>
+          <EntityDetails entity={selectedEntity} /> 
         </Space>
       </Space>
     </Suspense>

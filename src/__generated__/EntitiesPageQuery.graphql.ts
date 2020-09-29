@@ -8,8 +8,7 @@ export type EntitiesPageQueryVariables = {};
 export type EntitiesPageQueryResponse = {
     readonly allEntities: ReadonlyArray<{
         readonly id: string;
-        readonly serial: string | null;
-        readonly " $fragmentRefs": FragmentRefs<"EntitiesList_entities">;
+        readonly " $fragmentRefs": FragmentRefs<"EntitiesList_entities" | "EntityDetails_entity">;
     } | null> | null;
 };
 export type EntitiesPageQuery = {
@@ -23,14 +22,53 @@ export type EntitiesPageQuery = {
 query EntitiesPageQuery {
   allEntities {
     ...EntitiesList_entities
+    ...EntityDetails_entity
     id
-    serial
   }
 }
 
 fragment EntitiesList_entities on Entity {
   id
-  serial
+  name
+}
+
+fragment EntityDetailsFamily_entity on Entity {
+  parent {
+    id
+    name
+    type
+  }
+  children {
+    edges {
+      node {
+        id
+        name
+        type
+      }
+    }
+  }
+}
+
+fragment EntityDetails_entity on Entity {
+  id
+  name
+  type
+  showOnDashboard
+  ...EntitySprinklerEdit_entity
+  ...EntityDetailsFamily_entity
+}
+
+fragment EntitySprinklerEdit_entity on Entity {
+  sprinkler {
+    edges {
+      node {
+        id
+        status
+        serial
+        ipAddress
+      }
+    }
+  }
 }
 */
 
@@ -46,9 +84,21 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "serial",
+  "name": "name",
   "storageKey": null
-};
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "type",
+  "storageKey": null
+},
+v3 = [
+  (v0/*: any*/),
+  (v1/*: any*/),
+  (v2/*: any*/)
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -65,11 +115,15 @@ return {
         "plural": true,
         "selections": [
           (v0/*: any*/),
-          (v1/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
             "name": "EntitiesList_entities"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "EntityDetails_entity"
           }
         ],
         "storageKey": null
@@ -93,21 +147,126 @@ return {
         "plural": true,
         "selections": [
           (v0/*: any*/),
-          (v1/*: any*/)
+          (v1/*: any*/),
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "showOnDashboard",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SprinklerConnection",
+            "kind": "LinkedField",
+            "name": "sprinkler",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "SprinklerEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Sprinkler",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v0/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "status",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "serial",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "ipAddress",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Entity",
+            "kind": "LinkedField",
+            "name": "parent",
+            "plural": false,
+            "selections": (v3/*: any*/),
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "EntityConnection",
+            "kind": "LinkedField",
+            "name": "children",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "EntityEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Entity",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": (v3/*: any*/),
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "c35d9fe69c932d29f13e69d9ce4d9cf8",
+    "cacheID": "41b3af64a283a039d257bef1d0a015c2",
     "id": null,
     "metadata": {},
     "name": "EntitiesPageQuery",
     "operationKind": "query",
-    "text": "query EntitiesPageQuery {\n  allEntities {\n    ...EntitiesList_entities\n    id\n    serial\n  }\n}\n\nfragment EntitiesList_entities on Entity {\n  id\n  serial\n}\n"
+    "text": "query EntitiesPageQuery {\n  allEntities {\n    ...EntitiesList_entities\n    ...EntityDetails_entity\n    id\n  }\n}\n\nfragment EntitiesList_entities on Entity {\n  id\n  name\n}\n\nfragment EntityDetailsFamily_entity on Entity {\n  parent {\n    id\n    name\n    type\n  }\n  children {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment EntityDetails_entity on Entity {\n  id\n  name\n  type\n  showOnDashboard\n  ...EntitySprinklerEdit_entity\n  ...EntityDetailsFamily_entity\n}\n\nfragment EntitySprinklerEdit_entity on Entity {\n  sprinkler {\n    edges {\n      node {\n        id\n        status\n        serial\n        ipAddress\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '8c81ca34776f6d46d1a2ad7d0c0a96b6';
+(node as any).hash = 'e40d78ab0a6833cd2d327a047d06cd96';
 export default node;

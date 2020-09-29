@@ -6,7 +6,7 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type EntitiesList_entities = ReadonlyArray<{
     readonly id: string;
-    readonly serial: string | null;
+    readonly name: string | null;
     readonly " $refType": "EntitiesList_entities";
 }>;
 export type EntitiesList_entities$data = EntitiesList_entities;
@@ -36,12 +36,12 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "serial",
+      "name": "name",
       "storageKey": null
     }
   ],
   "type": "Entity",
   "abstractKey": null
 };
-(node as any).hash = '90e5be021a2d569a4c8808bf44b2e29e';
+(node as any).hash = '5da1429e6d60cbd0dc1035f377301538';
 export default node;
